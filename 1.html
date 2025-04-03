@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>找零钱最佳组合计算器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        .calculator {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: inline-block;
+            width: 120px;
+            font-weight: bold;
+        }
+
+        input {
+            padding: 8px;
+            width: 150px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e8f5e9;
+            border-radius: 4px;
+        }
+
+        .error {
+            color: #d32f2f;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <h2>找零钱最佳组合计算器</h2>
+        <div class="input-group">
+            <label>商品价格 (R):</label>
+            <input type="number" id="price" min="0" max="100" step="1">
+        </div>
+        <div class="input-group">
+            <label>顾客付款 (P):</label>
+            <input type="number" id="payment" min="0" max="100" step="1">
+        </div>
+        <button onclick="calculateChange()">计算找零</button>
+        <div id="error" class="error"></div>
+        <div id="result" class="result"></div>
+    </div>
+
+    <script>
+        function calculateChange() {
+            // 清除之前的结果
+            document.getElementById('error').textContent = '';
+            document.getElementById('result').textContent = '';
+
+            // 获取输入值
+            const price = parseInt(document.getElementById('price').value);
+            const payment = parseInt(document.getElementById('payment').value);
+
+            // 输入验证
+            if (isNaN(price) || isNaN(payment)) {
+                showError("请输入有效的数字");
+                return;
+            }
+
+            if (price < 0 || price > 100 || payment < 0 || payment > 100) {
+                showError("金额必须在0-100元之间");
+                return;
+            }
+
+            if (payment < price) {
+                showError("付款金额不足");
+                return;
+            }
+
+            // 计算找零
+            let change = payment - price;
+            if (change === 0) {
+                showResult("无需找零");
+                return;
+            }
+
+            // 计算各面值数量
+            const denominations = [
+                {value: 50, count: 0},
+                {value: 10, count: 0},
+                {value: 5, count: 0},
+                {value: 1, count: 0}
+            ];
+
+            let remaining = change;
+            denominations.forEach(denomination => {
+                denomination.count = Math.floor(remaining / denomination.value);
+                remaining %= denomination.value;
+            });
+
+            // 显示结果
+            const resultText = `
+                找零金额：${change}元
+                最佳组合：
+                50元：${denominations[0].count}张
+                10元：${denominations[1].count}张
+                5元：${denominations[2].count}张
+                1元：${denominations[3].count}张
+                总张数：${
+                    denominations.reduce((sum, d) => sum + d.count, 0)
+                }张
+            `;
+            showResult(resultText);
+        }
+
+        function showError(message) {
+            document.getElementById('error').textContent = message;
+        }
+
+        function showResult(message) {
+            document.getElementById('result').innerHTML = message;
+        }
+    </script>
+</body>
+</html>
