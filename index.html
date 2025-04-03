@@ -128,12 +128,12 @@
             // 显示结果
             const resultText = `
                 找零金额：${change}元
-                <br>最佳组合：
-                <br>50元：${denominations[0].count}张
-                <br>10元：${denominations[1].count}张
-                <br>5元：${denominations[2].count}张
-                <br>1元：${denominations[3].count}张
-                <br>总张数：${
+                最佳组合：
+                50元：${denominations[0].count}张
+                10元：${denominations[1].count}张
+                5元：${denominations[2].count}张
+                1元：${denominations[3].count}张
+                总张数：${
                     denominations.reduce((sum, d) => sum + d.count, 0)
                 }张
             `;
